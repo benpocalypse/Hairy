@@ -9,7 +9,7 @@
               x:Class="Hairy.Pages.Panels.LoginPanel">
 
   <StackPanel Margin="30" VerticalAlignment="Top" >
-	  <styles:Card Width="300" VerticalAlignment="Top" CornerRadius="15" Padding="30" Background="{DynamicResource MaterialDesignLinearGradient1}">
+	  <styles:Card Width="500" VerticalAlignment="Top" CornerRadius="15" Padding="30" Background="{DynamicResource MaterialDesignLinearGradient1}">
 
       
 		  <StackPanel Margin="0,4" HorizontalAlignment="Stretch">

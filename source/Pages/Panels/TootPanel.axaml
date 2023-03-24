@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+              xmlns:styles="clr-namespace:Neumorphism.Avalonia.Styles;assembly=Neumorphism.Avalonia"
+              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+              xmlns:assists="clr-namespace:Neumorphism.Avalonia.Styles.Assists;assembly=Neumorphism.Avalonia"
+              x:Class="Hairy.Pages.Panels.TootPanel">
+
+  <StackPanel Margin="10" VerticalAlignment="Top">
+	  <styles:Card Width="500" VerticalAlignment="Top" CornerRadius="15" Padding="10" Background="{DynamicResource MaterialDesignLinearGradient1}">
+
+		  	<Grid ColumnDefinitions="Auto,*" RowDefinitions="*,2*">
+				<Border Grid.Column="0" Grid.Row="0" Width="50" Height="50" Margin="0,0,8,0" CornerRadius="25" BorderBrush="{DynamicResource MaterialDesignToolBackground}" BorderThickness="3" ClipToBounds="True">
+					<Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="120" ClipToBounds="True">
+						<Image HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" ClipToBounds="True"
+								Source="{Binding AvatarImage}" Stretch="Uniform" Width="50" Height="50" />
+					</Border>
+				</Border>
+
+				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+					<TextBlock Padding="2" FontSize="14" FontWeight="Bold" Text="{Binding TootAuthor}"/>
+				</StackPanel>
+
+				<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical">
+					<TextBlock Name="TooterContext" Width="400" Padding="2" FontSize="12" FontWeight="Normal" Foreground="Gray" Text="{Binding TootContent}" TextWrapping="Wrap" />
+				</StackPanel>
+			</Grid>
+
+	  </styles:Card>
+  </StackPanel>
+</UserControl>

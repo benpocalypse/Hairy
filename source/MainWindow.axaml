@@ -6,6 +6,7 @@
         xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:showMeTheXaml="clr-namespace:ShowMeTheXaml;assembly=ShowMeTheXaml.Avalonia"
         xmlns:assists="clr-namespace:Neumorphism.Avalonia.Styles.Assists;assembly=Neumorphism.Avalonia"
+        xmlns:fullpages="clr-namespace:Hairy.Pages"
         xmlns:fullpanels="clr-namespace:Hairy.Pages.Panels"
         mc:Ignorable="d"
         d:DesignHeight="1440"
@@ -97,7 +98,13 @@
                     </Grid>
                 </styles:ColorZone>
 
-                <fullpanels:LoginPanel Name="_loginPanel" />
+                <Grid ColumnDefinitions="*">
+
+                    <fullpanels:LoginPanel Name="_loginPanel" Grid.Column="0" />
+
+                    <fullpages:TootPage Name="_tootPage" Grid.Column="0" />
+                    
+                </Grid>
 
             </DockPanel>
 

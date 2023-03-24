@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Threading;
 using Mastonet;
 using Neumorphism.Avalonia.Styles;
 
@@ -7,14 +6,19 @@ namespace Hairy.Pages.Panels
 {
     public class LoginPanelViewModel : ViewModelBase
     {
-        //private readonly string _instanceNamePreface = "https://";
-        private string _instanceName = "";//"mastodon.social";
+        private AuthenticationClient? _authClient;
+        public AuthenticationClient AuthenticationClient
+        {
+            get => _authClient;
+        }
+
+        private string _instanceName = "";
         public string InstanceName
         {
-            get => _instanceName; //_instanceNamePreface + 
+            get => _instanceName;
             set
             {
-                _instanceName = value;//.Substring(8);
+                _instanceName = value;
                 OnPropertyChanged();
             }
         }
@@ -30,6 +34,17 @@ namespace Hairy.Pages.Panels
             }
         }
 
+        private bool _isAuthenticated = false;
+        public bool IsAuthenticated
+        {
+            get => _isAuthenticated;
+            set
+            {
+                _isAuthenticated = value;
+                OnPropertyChanged();
+            }
+        }
+
         public void ButtonTokenClick(object sender)
         {
             if (sender is Button)
@@ -40,15 +55,18 @@ namespace Hairy.Pages.Panels
                 }
                 else
                 {
-                    //Dispatcher.UIThread.Post(() => 
+                    if (InstanceName.Contains("http"))
                     {
-                        var authClient = new AuthenticationClient(InstanceName);
-                        var appRegistration = authClient.CreateApp("C# Mastodon - Hairy", Scope.Read | Scope.Write | Scope.Follow).GetAwaiter().GetResult();
+                        SnackbarHost.Post("Instance should not contain http/https.");
+                    }
+                    else
+                    {
+                        _authClient = new AuthenticationClient(InstanceName); 
+                        var appRegistration = _authClient?.CreateApp("C# Mastodon - Hairy", Scope.Read | Scope.Write | Scope.Follow).GetAwaiter().GetResult();
 
-                        var url = authClient.OAuthUrl();
+                        var url = _authClient?.OAuthUrl();
                         System.Diagnostics.Process.Start("xdg-open", url);
-                        ///_ = System.Diagnostics.Process.Start("xdg-open", url);
-                    }//, DispatcherPriority.Normal);
+                    }
                 }
             }
         }
@@ -57,10 +75,13 @@ namespace Hairy.Pages.Panels
         {
             if (sender is Button)
             {
-                // TODO - validation
-                if (string.IsNullOrEmpty(Token))
+                if (string.IsNullOrEmpty(Token) || !(_authClient?.ConnectWithCode(Token).IsCompletedSuccessfully ?? false ) )
                 {
-                    SnackbarHost.Post("Please enter a token.");
+                    SnackbarHost.Post("Please enter a valid token.");
+                }
+                else
+                {
+                    IsAuthenticated = true;
                 }
             }
         }

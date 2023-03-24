@@ -9,8 +9,13 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Hairy.Pages.Panels;
+using Hairy.Pages;
 using Mastonet;
 using Neumorphism.Avalonia.Styles;
+using Avalonia.Threading;
+using Avalonia.Input;
+using Avalonia.VisualTree;
+using Neumorphism.Avalonia.Styles.Assists;
 
 namespace Hairy;
 
@@ -20,11 +25,14 @@ public partial class MainWindow : Window
 
     private LoginPanel? loginPanel;
     private Button? validateToken;
+    private TootPage? tootPage;
 
     public MainWindow()
     {
         InitializeComponent();
 
+        this.AttachDevTools(KeyGesture.Parse("Shift+F12"));
+        
         this.Opened += OnLoaded;
     }
 
@@ -34,26 +42,42 @@ public partial class MainWindow : Window
         loginPanel = this.FindControl<LoginPanel>("_loginPanel");
         validateToken = loginPanel.FindControl<Button>("_validateToken");
         validateToken.Click += ValidateTokenButtonClicked;
-        //loginPanel = this.Get<LoginPanel>(nameof(LoginPanel));
+        tootPage = this.FindControl<TootPage>("_tootPage");
+        tootPage.IsVisible = false;
     }
 
     private void ValidateTokenButtonClicked(object? sender, RoutedEventArgs e)
     {
-        var instance = (loginPanel?.DataContext as LoginPanelViewModel)?.InstanceName;
-        if (instance != null)
+        var lpvm = loginPanel?.DataContext as LoginPanelViewModel;
+        if (lpvm != null)
         {
-            var authClient = new AuthenticationClient(instance);
-            var appRegistration = authClient.CreateApp("Hairy", Scope.Read | Scope.Write | Scope.Follow).GetAwaiter().GetResult();
-            
-            var token = (loginPanel?.DataContext as LoginPanelViewModel)?.Token;
+            var authClient = lpvm.AuthenticationClient;
+            //var appRegistration = authClient.CreateApp("C# Mastodon - Hairy", Scope.Read | Scope.Write | Scope.Follow).GetAwaiter().GetResult();
 
-            _client = new MastodonClient(instance, token ?? string.Empty);
-            authClient.ConnectWithCode(token ?? string.Empty);
+            //var url = authClient.OAuthUrl();
 
-            var test = _client.GetHomeTimeline().ConfigureAwait(false).GetAwaiter().GetResult();
+            _client = new MastodonClient(lpvm.InstanceName, lpvm.Token);
+            var success = authClient.ConnectWithCode(lpvm.Token);
 
-            foreach (var thing in test)
+            var toots = _client.GetHomeTimeline().ConfigureAwait(false).GetAwaiter().GetResult();
+
+            loginPanel.IsVisible = false;
+            tootPage.IsVisible = true;
+        
+            foreach (var toot in toots)
             {
+                Dispatcher.UIThread.Post(() => 
+                {
+                    tootPage?.TootsList.Add(
+                        new TootPanel(
+                            tootAuthor: toot.Account.DisplayName + $" ({toot.Account.AccountName})",
+                            tootContent: StripHTML(toot.Content, true),
+                            avatarImageUrl: toot.Account.AvatarUrl
+                            )
+                        );                
+                }, DispatcherPriority.Normal);
+    
+                    /*
                 var strippedText = StripHTML(thing.Content, true);
 
                 var text = thing.Content == string.Empty ?
@@ -76,6 +100,7 @@ public partial class MainWindow : Window
                     text +
                     media
                     );
+                    */
             }
         }
     }
