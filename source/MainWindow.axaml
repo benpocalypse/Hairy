@@ -1,0 +1,106 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:styles="clr-namespace:Neumorphism.Avalonia.Styles;assembly=Neumorphism.Avalonia"
+        xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:showMeTheXaml="clr-namespace:ShowMeTheXaml;assembly=ShowMeTheXaml.Avalonia"
+        xmlns:assists="clr-namespace:Neumorphism.Avalonia.Styles.Assists;assembly=Neumorphism.Avalonia"
+        xmlns:fullpanels="clr-namespace:Hairy.Pages.Panels"
+        mc:Ignorable="d"
+        d:DesignHeight="1440"
+        d:DesignWidth="720"
+        Width="720"
+        Height="1440"
+        MaxHeight="1440"
+        x:Class="Hairy.MainWindow"
+        Title="Hairy - A Mastodon Client">
+
+    <styles:SnackbarHost HostName="Root" TemplateApplied="TemplatedControl_OnTemplateApplied" SnackbarHorizontalAlignment="Center" HorizontalContentAlignment="Center">
+        <styles:NavigationDrawer Name="LeftDrawer" LeftDrawerOpened="{Binding ElementName=NavDrawerSwitch, Path=IsChecked, Mode=TwoWay}">
+            <styles:NavigationDrawer.LeftDrawerContent>
+                    <StackPanel>
+                        <styles:ColorZone Mode="Custom" Background="{DynamicResource MaterialDesignPaper}" Height="180">
+                            <StackPanel>
+                                <Image HorizontalAlignment="Center" VerticalAlignment="Top"
+                                       Source="avares://Hairy/Assets/Icons/Hairy.png"
+                                       Width="256"
+                                       Height="256"
+                                       Stretch="Uniform" Margin="0,0,0,8" Opacity="1" />
+                            </StackPanel>
+                        </styles:ColorZone>
+                        <ListBox Classes="Drawer" Name="DrawerList" Background="{DynamicResource MaterialDesignPaper}"
+                                 Focusable="{Binding ElementName=LeftDrawer, Path=LeftDrawerOpened}">
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Height" Value="48" />
+                                    <Setter Property="Padding" Value="16,0" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="IsEnabled" Value="{Binding $self.Content.IsEnabled}" />
+                                </Style>
+                            </ListBox.Styles>
+                            <TextBlock Classes="Body2" Text="Timeline" />
+                            <TextBlock Classes="Body2" Text="Settings" />
+                            <TextBlock Classes="Body2" Text="About" />
+                         </ListBox>
+                         <TextBlock VerticalAlignment="Stretch" Text="" Height="2000" Background="{DynamicResource MaterialDesignPaper}" />
+                    </StackPanel>
+            </styles:NavigationDrawer.LeftDrawerContent>
+            <DockPanel LastChildFill="true">
+                <styles:ColorZone Name="PART_AppBarContainer" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                    DockPanel.Dock="Top" assists:ShadowAssist.ShadowDepth="Depth3"
+                                    Height="60" Mode="Standard" Background="Transparent" ZIndex="1">
+                    <Grid Margin="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="400" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!--Left side menu-->
+                        <ToggleButton Name="NavDrawerSwitch"
+                                        Classes="Flat TransparentBack"
+                                        Width="38" Height="38" CornerRadius="6" Padding="4">
+                            <avalonia:MaterialIcon Kind="Menu" Width="28" Height="28"  UseLayoutRounding="False" Foreground="{DynamicResource MaterialDesignForeground}" />
+                        </ToggleButton>
+                        <!--App title-->
+                        <TextBlock Grid.Column="2" Classes="Headline6" Text="Hairy" VerticalAlignment="Center" />
+                        <!--Theme toggle switch-->
+                        <ToggleSwitch Grid.Column="4" Name="toggleSwitchTheme" Content="Light theme" IsChecked="False" OnContent="Dark theme" OffContent="Light theme"
+                                        Command="{Binding Path=SwitchUITheme}" CommandParameter="{Binding ElementName=toggleSwitchTheme}" 
+                                        HorizontalAlignment="Right" />
+                        <!--<Right side menu-->
+                        <Menu Grid.Column="5" Height="32" Padding="0" Margin="0">
+                            <MenuItem Height="32" Width="32" Header="{avalonia:MaterialIconExt DotsVertical, Size=24}"
+                                        assists:MenuAssist.PopupAnchor="TopRight"
+                                        assists:MenuAssist.HorizontalOffset="-140"
+                                        assists:MenuAssist.VerticalOffset="10">
+                                <MenuItem Header="Hello !" Click="HelloButtonMenuItem_OnClick">
+                                    <MenuItem.Icon>
+                                    <avalonia:MaterialIcon Kind="Hand" Width="24" Height="24" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="Action 1" />
+                                <MenuItem Header="Action 2" />
+                                <MenuItem Header="Action 3" />
+                                <Separator />
+                                <MenuItem Header="Goodbye" Click="GoodbyeButtonMenuItem_OnClick">
+                                    <MenuItem.Icon>
+                                        <avalonia:MaterialIcon Kind="ExitRun" Width="24" Height="24" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+                    </Grid>
+                </styles:ColorZone>
+
+                <fullpanels:LoginPanel Name="_loginPanel" />
+
+            </DockPanel>
+
+        </styles:NavigationDrawer>
+    </styles:SnackbarHost>
+</Window>
